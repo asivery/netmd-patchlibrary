@@ -1,0 +1,25 @@
+struct patch {
+    u32 addr;
+    u32 contents;
+};
+
+struct patch_code {
+    u8 data[40];
+};
+
+struct patch_block {
+    patch patches[8];
+    $+=4;
+    patch_code patches_code[6];
+};
+
+struct eeprom_block_j {
+    $ += 12;
+    u16 fcode;
+};
+
+patch_block front_patches@0x1b2;
+patch_block back_patches@0x2e6;
+
+eeprom_block_j block_j@0x134;
+

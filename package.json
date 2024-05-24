@@ -1,0 +1,34 @@
+{
+  "name": "netmd-patchlibrary",
+  "version": "0.1.0",
+  "description": "A library which provides a way to permanently patch Sony NetMD units.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asivery/netmd-patchlibrary.git"
+  },
+  "keywords": [
+    "netmd",
+    "eeprom",
+    "minidisc",
+    "sony",
+    "patching"
+  ],
+  "author": "asivery",
+  "license": "GPL-2.0-only",
+  "bugs": {
+    "url": "https://github.com/asivery/netmd-patchlibrary/issues"
+  },
+  "homepage": "https://github.com/asivery/netmd-patchlibrary#readme",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "netmd-js": "^4.1.10",
+    "usb": "^2.12.1"
+  }
+}
