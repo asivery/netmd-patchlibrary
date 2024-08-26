@@ -64,28 +64,39 @@ export interface PatchStateError{
 
 // This class operates on images which have already been sliced.
 export class EEPROMData {
-    public image: Uint8Array;
+    public image: Uint8Array = null as any;
+    public originalImage: Uint8Array = null as any;
+    public strippedOriginalImage: Uint8Array = null as any;
 
-    protected originalImage: Uint8Array;
-    protected leftoverDataAfterDataSection: Uint8Array;
-    protected _loadingErrors: CRCError[];
+    public leftoverDataAfterDataSection: Uint8Array = null as any;
+    protected _loadingErrors: CRCError[] = null as any;
 
     public get loadingErrors(){ return this._loadingErrors; }
 
     constructor(image: Uint8Array, public deviceType: DeviceType) {
-        const dataSize = deviceType.dataSize ?? image.byteLength;
+        this.loadImage(image);
+    }
+
+    public loadImage(image: Uint8Array) {
+        const dataSize = this.deviceType.dataSize ?? image.byteLength;
         this.leftoverDataAfterDataSection = new Uint8Array(image.slice(dataSize));
         this.originalImage = new Uint8Array(image);
         const result = stripCRCAndVerify(image.slice(0, dataSize));
+        this.strippedOriginalImage = new Uint8Array(result.data);
         this.image = result.data;
         this._loadingErrors = result.errors;
     }
 
     public createDeltas(){
-        const withCRC = concatUint8Arrays(addCRCValues(this.image), this.leftoverDataAfterDataSection);
+        const withCRC = this.getFinalImage();
         const deltas = createEEPROMDeltas(this.originalImage, withCRC);
         this.originalImage.set(withCRC);
+        this.strippedOriginalImage.set(this.image);
         return deltas;
+    }
+
+    public getFinalImage() {
+        return concatUint8Arrays(addCRCValues(this.image), this.leftoverDataAfterDataSection);
     }
 
     public getPatchValue(slot: number): EEPROMPatchContents {

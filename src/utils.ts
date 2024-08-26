@@ -100,7 +100,7 @@ Front Patches Address: ${a(dev.frontPatchesLocation)}
 Back Patches Address: ${a(dev.backPatchesLocation)}
 F-Code Address: ${a(dev.fcodeLocation)}
 NetMD Block Address: ${a(dev.netmdBlockLocation)}
-System Data Length ${dev.dataSize ? a(dev.dataSize) : '<ALL>'}
+System Data Length: ${dev.dataSize ? a(dev.dataSize) : '<ALL>'}
 Patches: ${dev.patchesCount}
 Code Patches: ${dev.codePatchesCount}`;
 }

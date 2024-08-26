@@ -178,7 +178,7 @@ export interface DeviceType {
 export class DeviceConnection {
     private constructor(
         private hardware: Hardware,
-        private iface: NetMDInterface,
+        public iface: NetMDInterface,
         private factoryIface: NetMDFactoryInterface,
         private version: DeviceType
     ){}
@@ -202,6 +202,10 @@ export class DeviceConnection {
                 versionCode
             } as any // TODO
         );
+    }
+
+    public get name(): string {
+        return this.iface.netMd.getDeviceName();
     }
 
     public async readWholeEEPROM(callback?: (done: number, of: number) => void): Promise<Uint8Array> {
