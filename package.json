@@ -1,6 +1,6 @@
 {
   "name": "netmd-patchlibrary",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A library which provides a way to permanently patch Sony NetMD units.",
   "main": "dist/index.js",
   "scripts": {
