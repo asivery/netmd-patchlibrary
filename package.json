@@ -28,7 +28,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "netmd-js": "^4.1.10",
+    "netmd-exploits": "^0.5.10",
+    "netmd-js": "^4.2.3",
     "usb": "^2.12.1"
   }
 }

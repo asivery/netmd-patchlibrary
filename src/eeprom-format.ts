@@ -7,13 +7,13 @@ import { EEPROMPatchContents, ErrorString, PatchStorage, patchToEEPROM } from ".
 import { getLEUint16, getLEUint16AsBytes, getLEUint32, getLEUint32AsBytes } from "./utils";
 
 export type CRCError = { address: number, expected: number, got: number}
-export function stripCRCAndVerify(image: Uint8Array): { errors: CRCError[], data: Uint8Array } {
+export function stripCRCAndVerify(image: Uint8Array, isHiMD: boolean): { errors: CRCError[], data: Uint8Array } {
     const newImageSlices: Uint8Array[] = [];
     const errors: CRCError[] = [];
     for(let i = 0; i<image.length; i += 16){
         const slice = image.slice(i, i + 14);
         const sum = image[i + 14] | image[i + 15] << 8;
-        const expectedSum = calculateEEPROMChecksum(slice);
+        const expectedSum = calculateEEPROMChecksum(slice, isHiMD);
         if(expectedSum !== sum) {
             errors.push({ address: i, expected: expectedSum, got: sum });
         }
@@ -81,7 +81,7 @@ export class EEPROMData {
         const dataSize = this.deviceType.dataSize ?? image.byteLength;
         this.leftoverDataAfterDataSection = new Uint8Array(image.slice(dataSize));
         this.originalImage = new Uint8Array(image);
-        const result = stripCRCAndVerify(image.slice(0, dataSize));
+        const result = stripCRCAndVerify(image.slice(0, dataSize), this.deviceType.isHimd);
         this.strippedOriginalImage = new Uint8Array(result.data);
         this.image = result.data;
         this._loadingErrors = result.errors;

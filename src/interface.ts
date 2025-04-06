@@ -24,6 +24,19 @@ interface BaseType {
     dataSize?: number;
 }
 
+// UNIFINISHED!!!!
+const BaseH64K: BaseType = {
+    isHimd: true,
+    netmdBlockLocation: 0x47c,
+    codePatchesCount: 8, //?
+    patchesCount: 8,
+    frontPatchesLocation: 0xb6,
+    backPatchesLocation: 0x2f4,
+    fcodeLocation: 0x89,
+
+    dataSize: 0x2000,
+}
+
 const BaseS32K: BaseType = {
     isHimd: false,
     netmdBlockLocation: 0x47c,
@@ -66,6 +79,28 @@ class TypeS32KBitHW implements Hardware {
         const data: Uint8Array[] = [];
         for(let addr = address; addr < address+length; addr += 0x10) {
             data.push(await cleanRead(this.factory, addr, 0x10, MemoryType.EEPROM_2, true, true));
+            callback?.(addr - address + 0x10, length);
+        }
+
+        let merged = concatUint8Arrays(...data);
+        return merged;
+    }
+
+    async write(address: number, data: Uint8Array, callback?: (done: number, of: number) => void){
+        return writeOfAnyLength(this.factory, address, data, MemoryType.EEPROM_2, true);
+    }
+}
+
+class TypeH64KBitHW implements Hardware {
+    info = { eepromType: 3, wordIs16Bit: false };
+    size = 8192;
+
+    constructor(private iface: NetMDInterface, private factory: NetMDFactoryInterface){}
+
+    async read(address: number, length: number, callback?: (done: number, of: number) => void){
+        const data: Uint8Array[] = [];
+        for(let addr = address; addr < address+length; addr += 0x10) {
+            data.push(await cleanRead(this.factory, addr, 0x10, MemoryType.EEPROM_3, true, true));
             callback?.(addr - address + 0x10, length);
         }
 
@@ -277,4 +312,9 @@ const PID_MAP: { [pid: number]: [new (iface: NetMDInterface, factoryIface: NetMD
     // MZ-NF520 - to verify - PID unknown, S16K, 16-byte-word?
 
     0x0085: [TypeR16KBitHW, BaseR16K], // MZ-S1 - MLB shared with N505
+
+    // HiMD:
+    0x0186: [TypeH64KBitHW, BaseH64K], // MZ-NH600
+    0x0184: [TypeH64KBitHW, BaseH64K], // MZ-NH700
+    0x0219: [TypeH64KBitHW, BaseH64K], // MZ-RH10
 };
